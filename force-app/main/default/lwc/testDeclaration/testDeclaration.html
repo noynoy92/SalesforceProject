@@ -1,0 +1,59 @@
+<template>
+    <div class="declaration-container">
+        <template if:false={isChecked}>
+            <lightning-button label={label} title={label} icon-name="utility:routing_offline" onclick={handleChecked} class="slds-m-left_x-small uncheckedbtn"></lightning-button>
+        </template>
+        <template if:true={isChecked}>
+            <lightning-button label={label} title={label} icon-name="utility:success" onclick={handleChecked} class="slds-m-left_x-small checkedbtn"></lightning-button>
+        </template>
+    
+    
+        <template if:true={showModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-label="Meaningful description of the modal content" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                        <lightning-button-icon class="" onclick={closeModal} icon-name="utility:close"  alternative-text="close" title="close"></lightning-button-icon>
+                        <span class="slds-assistive-text">Cancel and close</span>
+                    </button>
+    
+                    <div class="slds-modal__content slds-p-around_medium modal_content_container" id="modal-content-id-1">
+                        <template if:true={declarationData}>
+                            <h4 class="header_text slds-p-top_large slds-p-bottom_medium">{declarationData.Name}</h4>
+                            <lightning-formatted-rich-text value={declarationData.Declaration_Summary__c}></lightning-formatted-rich-text>
+    
+                            <template if:false={isChecked}>
+                                <template if:true={declarationData.Required_File_Upload__c}>
+                                    <div class="file-upload-section slds-p-top_small">
+                                        <c-dynamic-File-Upload 
+                                            main_id_link={declarationData.Id}
+                                            file_label="Upload File/s " 
+                                            field_key="declaration-file" 
+                                            create_url="true" 
+                                            file_action="BOTH" 
+                                            multiple_files=true
+                                            ongetsearchvalue={uploadFile} 
+                                            inp_required=true
+                                            accept=".png, .doc, .docx, .pdf, .jpeg, .jpg">
+                                        </c-dynamic-File-Upload>
+                                    </div>
+                                </template>
+                                <div class="agree-btn-section slds-p-top_small">
+                                    <lightning-input class="agreebtn" data-id="agreeCB" type="checkbox" label="I Agree" > </lightning-input>
+                                </div>
+                                <div class="save-section slds-float_right slds-p-top_large">
+                                    <lightning-button variant="brand" label="Save" title="Save" onclick={handleSave} class="slds-m-left_x-small"></lightning-button>
+                                </div>
+                            </template>
+                            <template if:true={isChecked}>
+                                <template if:true={userDeclarationData}>
+                                    <p class="agree_text slds-p-top_small">User already agreed on the declaration last {userDeclarationData.AS_Declaration_Date__c}</p>
+                                </template>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+    </div>
+</template>

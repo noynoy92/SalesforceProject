@@ -1,0 +1,28 @@
+<template>
+    <div class="dynamic-creation-container">
+        <template if:true={showDropdown}>
+            <lightning-combobox
+                        name="Object"
+                        label="Object"
+                        value=""
+                        placeholder="Select Object"
+                        options={options}
+                        onchange={handleChange} ></lightning-combobox>
+        </template>
+
+        <template if:true={showRecordForm}>
+            <p class="record-creation-header slds-text-heading_medium">Create new {objectLabel}</p>
+            <lightning-record-form
+                object-api-name={objectData.objectName}
+                fields={objectData.fields}
+                onsuccess={handleSuccess}>
+            </lightning-record-form>
+            <lightning-button
+                class="cancel-btn"
+                label="Cancel"
+                variant="neutral"
+                onclick={handleCancel}>
+            </lightning-button>
+        </template>
+    </div>
+</template>

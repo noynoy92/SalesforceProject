@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen,lightningCommunity__Default">
+            <property name="header" label="Header" type="String"/>
+            <property name="description" label="Description" type="String"/>
+            <property name="fieldsetAPIName" label="Field Set API Name" type="String"/>
+            <property name="objectAPIName" label="Object API Name" type="String"/>
+            <property name="whereClauseStatement" label="Where Clause Statement" type="String"/>
+            <property name="editFlowAPIName" label="Edit Flow API Name" type="String"/>
+            <property name="viewFlowAPIName" label="Preview Flow API Name" type="String"/>
+            <property name="addFlowAPIName" label="Add Flow API Name" type="String"/>
+            <property name="exportFieldSet" label="Export Field Set" type="String"/>
+            <property name="showEditButton" label="Show Edit Button" type="Boolean" default="false"/>
+            <property name="showViewButton" label="Show View Button" type="Boolean" default="false"/>
+            <property name="showDeleteButton" label="Show Delete Button" type="Boolean" default="false"/>
+            <property name="showAddButton" label="Show Add Button" type="Boolean" default="false"/>
+            <property name="allowInlineEdit" label="Allow Inline Edit" type="Boolean" default="false"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

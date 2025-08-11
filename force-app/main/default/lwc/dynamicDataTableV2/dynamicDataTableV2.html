@@ -1,0 +1,149 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="slds-is-absolute" alternative-text="Loading" size="medium"></lightning-spinner>
+    </template>
+    <div class="dynamic-table-container">
+        <template if:true={showAddButton}>
+            <lightning-button-icon class="slds-float_right add-record-btn" icon-name="utility:add" alternative-text="Add" onclick={handleAdd} title="Add"></lightning-button-icon>
+        </template>
+        <button title="Export" class="slds-button slds-float_right export-btn slds-p-right_small" onclick={handleExport}><i class="fa-solid fa-file-export"></i></button>
+        <button title="Import" class="slds-button slds-float_right import-btn slds-p-right_small" onclick={handleImport}><i class="fa-solid fa-file-import"></i></button>
+        <h4 class="header-p slds-text-heading_medium slds-m-bottom_xx-small">{header}</h4>
+        <p class="description-p">{description}</p>
+
+        <template if:false={showSpinner}>
+            <div class="data-table-section">
+                <lightning-datatable
+                        key-field="Id"
+                        data={data.records}
+                        columns={column}
+                        hide-checkbox-column="true"
+                        onrowaction={callRowAction}
+                        draft-values={draftValues}
+                        onsave={handleSave}
+                        show-actions-menu="false"
+                        >
+                </lightning-datatable>
+            </div>
+        </template>
+
+         <!-- file upload modal -->
+        <template if:true={showImportModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+                    <div class="slds-modal__container">
+                        <button class="slds-button slds-button_icon splash-close-btn slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeImportModalbtn}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                      <div class="slds-modal__content card-modal-content slds-is-relative slds-p-around_medium" id="modal-content-id-5">
+                        <div class="file-upload-section">
+                            <lightning-input
+                                type="file"
+                                label="Upload"
+                                accept=".csv"
+                                multiple="false"
+                                onchange={handleFileUpload}>
+                            </lightning-input>
+                            <template if:true={errorMessage}>
+                                <p class="error-msg slds-p-top_x-small">There's an error: {errorMessage}</p>
+                            </template>
+                        </div>
+                      </div>
+                    </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+
+        <!-- edit modal -->
+        <template if:true={showEditModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+                    <div class="slds-modal__container">
+                        <button class="slds-button slds-button_icon splash-close-btn slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeEditModalbtn}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                      <div class="slds-modal__content card-modal-content slds-is-relative slds-p-around_medium" id="modal-content-id-1">
+                         <lightning-flow
+                            flow-api-name={editFlowAPIName}
+                            flow-input-variables={inputVariable}
+                            onstatuschange={handleStatusChange}>
+                        </lightning-flow>
+                      </div>
+                    </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+
+        <!-- view modal -->
+        <template if:true={showViewModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+                    <div class="slds-modal__container">
+                        <button class="slds-button slds-button_icon splash-close-btn slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeViewModalbtn}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                      <div class="slds-modal__content card-modal-content slds-is-relative slds-p-around_medium" id="modal-content-id-2">
+                         <lightning-flow
+                            flow-api-name={viewFlowAPIName}
+                            flow-input-variables={inputVariable}
+                            onstatuschange={handleStatusChange}>
+                        </lightning-flow>
+                      </div>
+                    </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+
+        <!-- delete modal -->
+         <template if:true={showDeleteModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+                    <div class="slds-modal__container">
+                        <button class="slds-button slds-button_icon splash-close-btn slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeDeleteModalbtn}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                      <div class="slds-modal__content card-modal-content slds-is-relative slds-p-around_medium" id="modal-content-id-3">
+                         <p>Are you sure you want to delete this record?</p>
+                         <lightning-button variant="destructive" label="Delete" title="Delete" onclick={handleDelete} class="slds-float_right"></lightning-button>
+                      </div>
+                    </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+         </template>
+
+         <!-- add modal -->
+          <template if:true={showAddModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+                    <div class="slds-modal__container">
+                        <button class="slds-button slds-button_icon splash-close-btn slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeAddModalbtn}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                      <div class="slds-modal__content card-modal-content slds-is-relative slds-p-around_medium" id="modal-content-id-4">
+                         <lightning-flow
+                            flow-api-name={addFlowAPIName}
+                            flow-input-variables={inputVariable}
+                            onstatuschange={handleStatusChange}>
+                        </lightning-flow>
+                      </div>
+                    </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+          </template>
+    </div>
+</template>
