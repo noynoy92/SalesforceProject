@@ -1,0 +1,27 @@
+<!--
+ * @ Description:
+ * @ Author: Jomare Salamania
+ * @ Create Time: 2025-02-04 09:51:06
+ * @ Modified by: jomare@alphasys.com.au
+ * @ Modified time: 2025-02-11 10:41:22
+ * @ Change Log: initial version
+ -->
+
+<template>
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-col">
+            <template if:true={isCharacter}>
+                <lightning-input required={isRequired} value={value} data-id="input-char" class="dynamic-wordchar-input" type="text" label={label} onchange={handleCount}></lightning-input>
+            </template>
+            <template if:true={isWord}>
+                <lightning-textarea required={isRequired} value={value} data-id="textarea-input" class="dynamic-wordcharTextArea-input" name="input1" label={label} onchange={handleCount}></lightning-textarea>
+            </template>
+        </div>
+        <div class="slds-col">
+            <span class="slds-float_right">{remainingNum} 
+                <template if:true={isWord}> words </template>
+                <template if:true={isCharacter}> character </template>
+                remaining</span>
+        </div>
+    </div>
+</template>
