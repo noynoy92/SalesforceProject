@@ -1,5 +1,5 @@
-@RestResource(urlMapping='/GoogleOAuthCallback')
-global with sharing class GoogleOAuthWebhook {
+@RestResource(urlMapping='/GoogleOAuthCallback/*')
+global without sharing class GoogleOAuthWebhook {
     @HttpGet
     global static void handleCallback() {
         RestRequest req = RestContext.request;
