@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen,lightningCommunity__Default,lightning__RecordPage">
+            <property name="label" label="Label" type="String"/>
+            <property name="placeHolder" label="Place holder" type="String"/>
+            <property name="objectAPIName" label="Object API Name" type="String"/>
+            <property name="fieldToSearch" label="Field to filter" description="Field API Name of the field to filter." type="String"/>
+            <property name="whereClause" label="Where clause" type="String"/>
+            <property name="defaultParentId" label="Default parent Id" description="Record Id of the default parent record." type="String"/>
+            <property name="defaultChildId" label="Default child Id" description="Record Id of the default child record." type="String"/>
+            <property name="childObjectAPIName" label="Child Object API Name" description="Object API Name of the related child record." type="String"/>
+            <property name="childFieldToSearch" label="Child Field To Search" description="Field API Name of the child object field to filter." type="String"/>
+            <property name="childWhereClause" label="Child Where Clause" description="Where clause of child record." type="String"/>
+            <property name="childToParentLookupFieldAPIName" label="Child to Parent lookup field API Name" description="Field API Name of the lookup field of the parent object." type="String"/>
+            <property name="parentId" label="Parent Id" description="Result Id of the selected parent." type="String"/>
+            <property name="childId" label="Child Id" description="Result Id of the selected child." type="String"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

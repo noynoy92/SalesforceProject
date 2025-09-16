@@ -3,6 +3,7 @@ import getUserEvents from '@salesforce/apex/googleCalendarCMPCTRL.getUserEvents'
 import getAuthURL from '@salesforce/apex/googleCalendarCMPCTRL.getGoogleAuthUrl';
 import getToken from '@salesforce/apex/googleCalendarCMPCTRL.getAccessToken';
 import getCurrentUserToken from '@salesforce/apex/googleCalendarCMPCTRL.getUserAccessToken';
+import getTestEvent from '@salesforce/apex/googleCalendarCMPCTRL.testGetEvent';
 export default class GoogleCalendarCMP extends LightningElement {
     @track userAccessToken;
     connectedCallback(){
@@ -27,11 +28,18 @@ export default class GoogleCalendarCMP extends LightningElement {
         }else{
             this.getAuthURLMethod();
         }
+        getTestEvent().then(response=>{
+            console.log('response 32 ',response);
+        }).catch(error => {
+            console.log('error => ',error);
+        });
     }
     getAuthURLMethod(){
         getAuthURL().then(result => {
             console.log('result 37 ',result);
-            window.open(result, "_self");
+            const windowName = "smallWindow"; // A name for the new window
+            const features = "width=500,height=400,toolbar=no,menubar=no,scrollbars=yes,resizable=yes";
+            window.open(result, windowName, features);
         }).catch(error => {
             console.log('error => ',error);
         });

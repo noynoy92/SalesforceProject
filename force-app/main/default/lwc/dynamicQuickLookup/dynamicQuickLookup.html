@@ -1,0 +1,72 @@
+<template>
+    <!-- <div class="slds-form-element">
+        <label class="slds-form-element__label" for="combobox-id-1" id="combobox-label-id-33">Relate To</label>
+        <div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                        <input type="text" class="slds-input slds-combobox__input" id="combobox-id-1" aria-autocomplete="list" auto-complete="off" aria-controls="listbox-id-1" aria-expanded="false" aria-haspopup="listbox" role="combobox" placeholder="Search..." />
+                        <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                            <lightning-icon icon-name="utility:search" alternative-text="Search" title="Search"></lightning-icon>
+                        </span>
+                        <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox" aria-label="Search" tabindex="0" aria-busy="false">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <li role="presentation" class="slds-listbox__item">
+                                    <div class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                            <span class="slds-icon_container slds-icon-standard-account">
+                                                <lightning-icon icon-name="utility:record_lookup" alternative-text="Record" title="Record"></lightning-icon>
+                                            </span>
+                                        </span>
+                                        <span class="slds-media__body">
+                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">Burlington Textiles Corp of America</span>
+                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">Account • Burlington, NC</span>
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <div class="quick-lookup-main-container">
+        <div class="quick-lookup-parent-container" data-name={parent} tabindex="0" onblur={handleBlur}>
+            <div class="search-container-parent">
+                <div class="input-section slds-form-element__control" onblur={handleWrapperBlur} tabindex="0">
+                    <lightning-input
+                        class="input-parent"
+                        name="search-parent-record"
+                        label={label}
+                        placeholder={placeHolder}
+                        type="search"
+                        onchange={handleChange}
+                        value={defaultVal}>
+                    </lightning-input>
+                </div>
+                <div if:true={showParentOption} class="result-section">
+                    <c-quick-lookup-input-c-m-p search-result={searchResult} container-name="quick-lookup-parent-container" onselected_value={handleSelectedParent} onshow_result={handleParentShow}></c-quick-lookup-input-c-m-p>
+                </div>
+            </div>
+        </div>
+        <div class="quick-lookup-child-container" data-name={child} tabindex="0" onblur={handleBlur}>
+            <div class="search-container-child">
+                <div class="input-section">
+                    <lightning-input
+                        name="search-child-record"
+                        label={label}
+                        placeholder={placeHolder}
+                        type="search"
+                        onchange={handleChange}
+                        value={defaultChildVal}
+                        onfocus={showPickListOptions}>
+                    </lightning-input>
+                </div>
+                <div if:true={showChildOption} class="result-section">
+                    <c-quick-lookup-input-c-m-p search-result={searchResultChildFiltered} container-name="quick-lookup-child-container" onselected_value={handleSelectedChild} onshow_result={handleChildShow}></c-quick-lookup-input-c-m-p>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
