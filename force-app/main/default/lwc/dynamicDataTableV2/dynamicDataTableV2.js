@@ -4,11 +4,12 @@ import saveCSVData from '@salesforce/apex/dynamicDataTableV2CTRL.saveCSV';
 import userId from '@salesforce/user/Id';
 import { deleteRecord,updateRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import dynamicTableResource from '@salesforce/resourceUrl/DynamicTableIcon';
 export default class DynamicDataTableV2 extends LightningElement {
-    @api header = '';
-    @api description = '';
-    @api fieldsetAPIName = '';
-    @api objectAPIName = '';
+    @api header = 'Test Header';
+    @api description = 'Test Description';
+    @api fieldsetAPIName = 'Account_FieldSet';
+    @api objectAPIName = 'Account';
     @api whereClauseStatement;
     @api editFlowAPIName;
     @api viewFlowAPIName;
@@ -19,6 +20,9 @@ export default class DynamicDataTableV2 extends LightningElement {
     @api showAddButton;
     @api allowInlineEdit;
     @api exportFieldSet;
+    @api showPagination = false;
+    @api allowSearch = false;
+    @api customColumn;
 
     @track data;
     @track showSpinner = true;
@@ -29,14 +33,24 @@ export default class DynamicDataTableV2 extends LightningElement {
     @track showDeleteModal = false;
     @track showAddModal = false;
     @track showImportModal = false;
-    @track currentUserId = userId;
     @track iterator = 0;
     @track idToDelete;
     @track draftValues = [];
     @track errorMessage;
 
+    @track pageSize=5;
+    @track totalPages = 0;
+    @track currentPage = 1;
+    @track allRecords;
+    @track showTableFooter = true;
+    @track recordsSize;
+    @track showNoRecords = false;
+
+    exportIcon = dynamicTableResource + '/DynamicTableV2Icon/file-export-solid-full.svg';
+    importIcon = dynamicTableResource + '/DynamicTableV2Icon/file-import-solid-full.svg';
+
     connectedCallback(){
-        console.log('objectAPIName ',this.objectAPIName);
+        console.log('userId ',userId);
         this.getRecordMethod();
     }
     renderedCallback(){
@@ -70,27 +84,30 @@ export default class DynamicDataTableV2 extends LightningElement {
                 .dynamic-table-container .data-table-section lightning-datatable span.slds-resizable__handle {
                     display:none;
                 }
-                .dynamic-table-container button.slds-button.export-btn i.fa-solid.fa-file-export{
+                .dynamic-table-container button.slds-button.export-btn lightning-icon.slds-icon_container svg{
                     border-radius: 5px;
                     opacity: 1;
-                    color:#aa233f;
-                    font-size: 30px;
-                    bottom: 7px;
+                    fill:#aa233f;
+                    bottom:13px;
                     position: relative;
+                    width:42px;
+                    height:40px;
                 }
-                .dynamic-table-container button.slds-button.import-btn i.fa-solid.fa-file-import{
+                .dynamic-table-container button.slds-button.import-btn lightning-icon.slds-icon_container svg{
                     border-radius: 5px;
                     opacity: 1;
-                    color:#aa233f;
-                    font-size: 30px;
-                    bottom: 7px;
+                    fill:#aa233f;
+                    bottom:13px;
                     position: relative;
+                    width:42px;
+                    height:40px;
                 }
                 .dynamic-table-container button.slds-button.import-btn:focus {
                     box-shadow:unset;
                 }
                 .dynamic-table-container button.slds-button.import-btn:active{
                     border-color:unset !important;
+                    border:unset;
                 }
 
                 .dynamic-table-container button.slds-button.export-btn:focus {
@@ -98,6 +115,7 @@ export default class DynamicDataTableV2 extends LightningElement {
                 }
                 .dynamic-table-container button.slds-button.export-btn:active {
                     border-color:unset !important;
+                    border:unset;
                 }
                 .dynamic-table-container .file-upload-section lightning-input span.slds-file-selector__button.slds-button{
                     border: 1px solid #dddbda;
@@ -112,11 +130,39 @@ export default class DynamicDataTableV2 extends LightningElement {
                 .dynamic-table-container .file-upload-section lightning-input label.slds-file-selector__body span.slds-file-selector__text {
                     color: #808285;
                 }
+                .dynamic-table-container lightning-icon.slds-icon-utility-close.slds-icon_container svg{
+                    fill:#808285;
+                }
+                .dynamic-table-container div.slds-modal__content {
+                    border-radius: 5px;
+                }
+                .dynamic-table-container .table-header .slds-select_container select.slds-select{
+                    border: 1px solid #808285;
+                }
+                // .dynamic-table-container .data-table-section lightning-datatable td.table-items:hover::after {
+                //     content: attr(data-cell-value);
+                //     position: absolute;
+                //     //bottom: 100%;
+                //     //left: 50%;
+                //     transform: translateX(-50%);
+                //     white-space: nowrap;
+                //     background: #333;
+                //     color: #fff;
+                //     padding: 6px 10px;
+                //     border-radius: 4px;
+                //     z-index: 1000;
+                // }
+
             `;
             this.template.querySelector('.dynamic-table-container').appendChild(style);
         }
+
+        if(this.data){
+            this.showNoRecords = this.data.records.length > 0 ? false : true;
+        }
     }
     getRecordMethod(){
+        console.log('objectAPIName ',this.objectAPIName,'fieldsetAPIName 120 ',this.fieldsetAPIName);
         getAllRecords({objectName:this.objectAPIName,fieldSet:this.fieldsetAPIName,whereClause:this.whereClauseStatement,exportFieldSet:this.exportFieldSet})
         .then(result =>{
             if(result){
@@ -126,17 +172,19 @@ export default class DynamicDataTableV2 extends LightningElement {
 
                 var columnItem = result.fieldInfos;
                 columnItem.map(row=>{
-                    if(row.fieldType == 'DATE'){
-                        row.type = 'date',
-                        row.typeAttributes = {   
+                    switch (row.fieldType){
+                        case 'DATE':
+                            row.type = 'date-local',
+                            row.typeAttributes = {   
                                                 year: 'numeric',
                                                 month: 'long',      
                                                 day: '2-digit',
                                                 timeZone: result.timeZoneId 
                                             }
-                    }else if(row.fieldType == 'DATETIME'){
-                        row.type = 'date',
-                        row.typeAttributes = {   
+                            break;
+                        case 'DATETIME':
+                            row.type = 'date',
+                            row.typeAttributes = {   
                                                 year: 'numeric',
                                                 month: 'long',      
                                                 day: '2-digit',
@@ -145,12 +193,44 @@ export default class DynamicDataTableV2 extends LightningElement {
                                                 hour12: true,
                                                 timeZone: result.timeZoneId 
                                             }
+                            break;
+                        case 'CURRENCY':
+                            row.type = 'currency'
+                            break; 
+                        case 'URL':
+                            row.type = 'url'
+                            break;
+                        case 'BOOLEAN':
+                            row.type = 'boolean'
+                            break;  
+                        case 'INTEGER':
+                            row.type = 'number'
+                            break;  
+                        case 'PHONE':
+                            row.type = 'phone'
+                            break;  
+                        case 'EMAIL':
+                            row.type = 'email'
+                            break;  
+                        default:
+                            '';                             
                     }
                     if(this.allowInlineEdit && !row.isFormula && row.isEditable){
                         row.editable = true;
                     }
+                    row.cellAttributes = {
+                        class: 'table-items'
+                    }
                     return row;
                 });
+
+                if(this.customColumn){
+                    const customCol = this.customColumn.split(',');
+                    columnItem = columnItem.map((item, index) => ({
+                        ...item,
+                        label: customCol[index]
+                    }));
+                }
 
                 console.log('columnItems 85 ',columnItem);
                 if(this.showViewButton){
@@ -199,12 +279,92 @@ export default class DynamicDataTableV2 extends LightningElement {
                 this.column = columnItem;
                 console.log('columnItem ',columnItem);
                 console.log('result ',result);
+                if(this.pageSize){
+                    this.allRecords = result.records;
+                    this.calculateTotalPage(this.allRecords);
+                    this.recordsSize = this.allRecords.length;
+                    result.records = this.updateDisplayeData(this.allRecords);
+                }
+                console.log('this.allRecords ',this.allRecords);
                 this.data = result;
                 this.showSpinner = false;
             }
         }).catch(error=>{
             console.error('error ',error);
         })
+    }
+    calculateTotalPage(records){
+        this.totalPages =  Math.ceil(
+            records.length / this.pageSize
+        );
+    }
+    updateDisplayeData(records){
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return records.slice(start, end);
+    }
+    handleBack(){
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.data.records = this.updateDisplayeData(this.allRecords);
+        }
+    }
+    handleNext(){
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.data.records = this.updateDisplayeData(this.allRecords);
+        }
+        console.log('this.data ',this.data);
+        console.log('this.currentPage ',this.currentPage);
+        console.log('this.totalPages ',this.totalPages);
+    }
+    get isFirstPage() {
+        return this.currentPage === 1;
+    }
+
+    get isLastPage() {
+        return this.currentPage === this.totalPages;
+    }
+    get options() {
+        return [
+            { label: '5', value: 5 },
+            { label: '10', value: 10 },
+            { label: '20', value: 20 },
+            { label: '50', value: 50 }
+        ];
+    }
+    handlePageChange(event){
+        this.pageSize = event.detail.value;
+        this.currentPage = 1;
+        this.calculateTotalPage(this.allRecords);
+        this.data.records = this.updateDisplayeData(this.allRecords);
+        this.recordsSize = this.allRecords.length;
+    }
+    handleSearchChange(event){
+        const val = event.target.value;
+        this.currentPage = 1;
+        if(val){
+            const results = this.allRecords.filter(item =>
+                Object.entries(item)
+                    .filter(([key]) => key !== 'Id')
+                    .some(([, value]) =>
+                        String(value).toLowerCase().includes(val.toLowerCase())
+                    )
+            );
+            this.calculateTotalPage(results);
+            this.data.records =  this.updateDisplayeData(results);
+            this.recordsSize = results.length;
+        }else{
+            this.calculateTotalPage(this.allRecords);
+            this.data.records = this.updateDisplayeData(this.allRecords);
+            this.recordsSize = this.allRecords.length;
+        }
+    }
+    handleBlur(event){
+        console.log('Value:', event.target.value);
+        // this.calculateTotalPage(this.allRecords);
+        // this.data.records = this.updateDisplayeData(this.allRecords);
+        // this.recordsSize = this.allRecords.length;
     }
     handleExport(){
         const blob = new Blob([this.data.stringCSV]);
@@ -262,11 +422,6 @@ export default class DynamicDataTableV2 extends LightningElement {
     }
     handleAdd(event){
         this.inputVariable = [
-            {
-                name: 'userID',
-                type: 'String',
-                value: this.currentUserId
-            },
             {
                 name:'action',
                 type:'String',
@@ -362,6 +517,7 @@ export default class DynamicDataTableV2 extends LightningElement {
             this.getRecordMethod();
         }).catch(error =>{
             console.error('error ',error);
+            this.showSpinner = false;
             this.errorMessage = error.body.message;
         })
     }

@@ -44,12 +44,11 @@ public without sharing class dynamicDataTableV2CTRL {
             //     fieldInfo.add(field);
             //     fieldPaths.add(member.getFieldPath());
             // }
-
+            System.debug('fieldSet 47 '+fieldSet);
+            System.debug('exportFieldSet 48 '+exportFieldSet);
             Map<String,Object> fieldSetInfos = getFieldSetInfo(objectName,fieldSet);
             List<Map<String,Object>> fieldInfo = (List<Map<String,Object>>)fieldSetInfos.get('fieldInfo');
             List<String> fieldPaths = (List<String>)fieldSetInfos.get('fieldPaths');
-            Map<String,Object> exportFieldSetInfos = getFieldSetInfo(objectName,exportFieldSet);
-            List<String> exportFieldPaths = (List<String>)exportFieldSetInfos.get('fieldPaths');
 
             // String query = 'SELECT ' + String.join(fieldPaths, ',') + ' FROM '+objectName;
             // if(String.isNotBlank(whereClause)){
@@ -64,13 +63,17 @@ public without sharing class dynamicDataTableV2CTRL {
             // TimeZone tz = UserInfo.getTimeZone();
             String query = 'SELECT ' + String.join(fieldPaths, ',') + ' FROM '+objectName;
             List<SObject> records = queryRecords(objectName,fieldPaths,whereClause);
-            List<SObject> exportRecords = queryRecords(objectName,exportFieldPaths,whereClause);
             returnMap.put('query',query);
             returnMap.put('records',records);
             returnMap.put('timeZoneId',org.TimeZoneSidKey);
             returnMap.put('fieldInfos',fieldInfo);
-            exportFieldPaths.add('Id');
-            returnMap.put('stringCSV',generateCSV(exportRecords,exportFieldPaths,objectName));
+            if(String.isNotBlank(exportFieldSet)){
+                Map<String,Object> exportFieldSetInfos = getFieldSetInfo(objectName,exportFieldSet);
+                List<String> exportFieldPaths = (List<String>)exportFieldSetInfos.get('fieldPaths');
+                List<SObject> exportRecords = queryRecords(objectName,exportFieldPaths,whereClause);
+                exportFieldPaths.add('Id');
+                returnMap.put('stringCSV',generateCSV(exportRecords,exportFieldPaths,objectName));
+            }
             return returnMap;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage() + ' at line: '+e.getLineNumber());
@@ -101,14 +104,18 @@ public without sharing class dynamicDataTableV2CTRL {
         }
 
         Schema.SObjectType sObjectType = globalDescribe.get(objectName);
+        System.debug('sObjectType 104 '+sObjectType);
         Schema.DescribeSObjectResult describeResult = sObjectType.getDescribe();
-
+        System.debug('describeResult '+describeResult);
 
         // Step 3: Get field sets map
         Map<String, Schema.FieldSet> fieldSetMap = describeResult.fieldSets.getMap();
+        System.debug('fieldSetMap 109 '+fieldSetMap);
 
+        System.debug('fieldSet '+fieldSet);
         // Step 4: Check if field set exists
         if (!fieldSetMap.containsKey(fieldSet)) {
+            System.debug('im here 115');
             throw new AuraHandledException('Field set not found: ' + fieldSet);
         }
 

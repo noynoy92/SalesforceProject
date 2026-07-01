@@ -6,9 +6,12 @@
         <target>lightning__FlowScreen</target>
         <target>lightningCommunity__Page</target>
         <target>lightningCommunity__Default</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
     </targets>
     <targetConfigs>
-        <targetConfig targets="lightning__FlowScreen,lightningCommunity__Default">
+        <targetConfig targets="lightning__FlowScreen,lightningCommunity__Default,lightning__AppPage,lightning__RecordPage,lightning__HomePage">
             <property name="header" label="Header" type="String"/>
             <property name="description" label="Description" type="String"/>
             <property name="fieldsetAPIName" label="Field Set API Name" type="String"/>
@@ -23,6 +26,9 @@
             <property name="showDeleteButton" label="Show Delete Button" type="Boolean" default="false"/>
             <property name="showAddButton" label="Show Add Button" type="Boolean" default="false"/>
             <property name="allowInlineEdit" label="Allow Inline Edit" type="Boolean" default="false"/>
+            <property name="showPagination" label="Show Pagination" type="Boolean" default="false"/>
+            <property name="allowSearch" label="Allow Search" type="Boolean" default="false"/>
+            <property name="customColumn" label="Custom Column" description="Overrides the default table column labels. Specify the labels as a comma-separated list in the same order as the fields in the field set." type="String"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

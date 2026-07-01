@@ -6,13 +6,45 @@
         <template if:true={showAddButton}>
             <lightning-button-icon class="slds-float_right add-record-btn" icon-name="utility:add" alternative-text="Add" onclick={handleAdd} title="Add"></lightning-button-icon>
         </template>
-        <button title="Export" class="slds-button slds-float_right export-btn slds-p-right_small" onclick={handleExport}><i class="fa-solid fa-file-export"></i></button>
-        <button title="Import" class="slds-button slds-float_right import-btn slds-p-right_small" onclick={handleImport}><i class="fa-solid fa-file-import"></i></button>
+        <button title="Export" class="slds-button slds-float_right export-btn slds-p-right_small" onclick={handleExport} lwc:if={exportFieldSet}>
+            <lightning-icon 
+                src={exportIcon} 
+                alternative-text="Export" >
+            </lightning-icon>
+        </button>
+        <button title="Import" class="slds-button slds-float_right import-btn" onclick={handleImport}>
+            <lightning-icon 
+                src={importIcon} 
+                alternative-text="Import" >
+            </lightning-icon>
+        </button>
         <h4 class="header-p slds-text-heading_medium slds-m-bottom_xx-small">{header}</h4>
         <p class="description-p">{description}</p>
 
         <template if:false={showSpinner}>
             <div class="data-table-section">
+                <div class="table-header slds-grid slds-wrap slds-p-bottom_medium">
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="slds-size_2-of-12" lwc:if={showPagination}>
+                            <lightning-select
+                            name="pagesize"
+                            label="Page size"
+                            value={pageSize}
+                            options={options}
+                            onchange={handlePageChange}></lightning-select>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="slds-size_4-of-12 slds-float_right" lwc:if={allowSearch}>
+                            <lightning-input
+                                label="Search"
+                                value=''
+                                onchange={handleSearchChange}
+                                onblur={handleBlur}
+                                ></lightning-input>
+                        </div>
+                    </div>
+                </div>
                 <lightning-datatable
                         key-field="Id"
                         data={data.records}
@@ -24,6 +56,23 @@
                         show-actions-menu="false"
                         >
                 </lightning-datatable>
+                <div class="slds-align_absolute-center slds-p-top_medium no-records" lwc:if={showNoRecords}>
+                    <span>No records found.</span>
+                </div>
+                <div class="slds-grid slds-wrap table-footer" lwc:if={showPagination}>
+                    <div class="slds-col slds-size_4-of-12">
+                        <p class="slds-p-top_medium total-rec">Total records: {recordsSize}</p>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <div class="table-nav slds-align_absolute-center slds-p-top_medium">
+                            <lightning-button-icon disabled={isFirstPage} class="back-btn slds-p-right_small" icon-name="utility:chevronleft" alternative-text="Back" onclick={handleBack} title="Back"></lightning-button-icon>
+                            <lightning-button-icon disabled={isLastPage} class="next-btn" icon-name="utility:chevronright" alternative-text="Next" onclick={handleNext} title="Next"></lightning-button-icon>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <div class="page-no slds-float_right slds-p-top_medium"><p>Page {currentPage} of {totalPages}</p></div>
+                    </div>
+                </div>
             </div>
         </template>
 
