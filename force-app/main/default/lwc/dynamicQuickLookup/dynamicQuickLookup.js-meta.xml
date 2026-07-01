@@ -12,7 +12,8 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__FlowScreen,lightningCommunity__Default,lightning__RecordPage">
-            <property name="label" label="Label" type="String"/>
+            <property name="label" label="Parent Label" type="String"/>
+            <property name="childlabel" label="Child Label" type="String"/>
             <property name="placeHolder" label="Place holder" type="String"/>
             <property name="objectAPIName" label="Object API Name" type="String"/>
             <property name="fieldToSearch" label="Field to filter" description="Field API Name of the field to filter." type="String"/>

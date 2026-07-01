@@ -22,14 +22,12 @@ export default class QuickLookupInput extends LightningElement {
         this.isListening = true;
     }
     disconnectedCallback(){
-        console.log('im here 22');
         window.removeEventListener('click', this.hideDropdown);
     }
     hideDropdown = (event) => {
         const arr = event.path; 
         var classNames = [];
         Object.keys(arr).forEach(key => {
-            console.log('keys 29 ',key, arr[key].className);
             classNames.push(arr[key].className);
         });
         console.log('has classname 28 ',classNames.includes(this.containerName),' containerName ',this.containerName);

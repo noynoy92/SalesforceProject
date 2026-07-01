@@ -4,7 +4,8 @@ import getDefaultRec from '@salesforce/apex/DynamicQuickLookupCTRL.getDefaultRec
 import { loadScript } from 'lightning/platformResourceLoader';
 import lodashRes from '@salesforce/resourceUrl/lodash';
 export default class DynamicQuickLookupParent extends LightningElement {
-    @api label='Test label';
+    @api label;
+    @api childlabel;
     @api placeHolder;
     @api objectAPIName;
     @api fieldToSearch;
