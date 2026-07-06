@@ -34,7 +34,39 @@ export default class DynamicQuickLookupParent extends LightningElement {
     delayedSearch;
 
     connectedCallback(){
-        console.log('localName ',this.template.host.localName,'tagName ',this.template.host.tagName);
+        if(this.defaultParentId && this.defaultChildId){
+            const payload = {
+                parentObjectAPI:this.objectAPIName,
+                childObjectAPI:this.childObjectAPIName,
+                parentFieldToSearch:this.fieldToSearch,
+                childFieldToSearch:this.childFieldToSearch,
+                defaultParentId: this.defaultParentId,
+                defaultChildId: this.defaultChildId
+            };
+            getDefaultRec({jsonData:JSON.stringify(payload)})
+            .then(result =>{
+                if(result[this.objectAPIName].length > 0){
+                    this.defaultVal = result[this.objectAPIName][0][this.fieldToSearch];
+                    this.parentId = result[this.objectAPIName][0]['Id'];
+                }
+                if(result[this.childObjectAPIName].length > 0){
+                    const items = [];
+                    const generateUniqueID = (lenghtId) => [...Array(lenghtId).keys()].map((elem)=>Math.random().toString(36).substr(2, 1)).join("");
+                    let childRecord = result[this.childObjectAPIName][0];
+                    childRecord.label = childRecord[this.childFieldToSearch];
+                    childRecord.value = childRecord['Id'];
+                    childRecord.uniqueId = generateUniqueID(17);
+                    items.push(childRecord);
+                    this.searchResultChild = items;
+                    this.searchResultChildFiltered = items;
+                    this.defaultChildVal = childRecord[this.childFieldToSearch];
+                    this.childId = childRecord['Id'];
+                }
+            })
+            .catch(error =>{
+                console.error(error);
+            })
+        }
     }
     renderedCallback(){
         if (this.lodashInitialized) return;
@@ -52,12 +84,18 @@ export default class DynamicQuickLookupParent extends LightningElement {
         //    this.handleClickOutside(event);
         // });
         //document.addEventListener('click', this.handleClickOutside);
-        window.addEventListener("click", (event) => {
-            this.hideDropdown(event);
-        });
+        // window.addEventListener("click", (event) => {
+        //     this.hideDropdown(event);
+        // });
+    }
+    get parentPlaceHolder(){
+        return `Search ${this.label}...`;
+    }
+    get childPlaceHolder(){
+        return `Search ${this.childlabel}...`;
     }
     handleChange(event){
-       // console.log('event.target.value ',event.target.value);
+       console.log('event.target.value ',event.target.value);
         var value = event.target.value;
         if(value){
             if(event.target.name == 'search-parent-record'){
@@ -79,8 +117,14 @@ export default class DynamicQuickLookupParent extends LightningElement {
                 this.searchResultChild = null;
                 this.searchResultChildFiltered = null;
                 this.showChildOption = false;
+                this.defaultVal = '';
+                this.defaultChildVal = '';
+                this.parentId = '';
+                this.childId = '';
             }else{
                 this.searchResultChildFiltered = this.searchResultChild;
+                this.defaultChildVal = '';
+                this.childId = '';
             }
         }
     }
@@ -90,7 +134,6 @@ export default class DynamicQuickLookupParent extends LightningElement {
             queryStr:query
         }
         ).then(result =>{
-           // console.log('result 39 ',result);
             if(result.length > 0){
                 const generateUniqueID = (lenghtId) => [...Array(lenghtId).keys()].map((elem)=>Math.random().toString(36).substr(2, 1)).join("");
                 var items = [];
@@ -111,14 +154,18 @@ export default class DynamicQuickLookupParent extends LightningElement {
                     this.searchResult = noItem;
                 }else{
                     this.searchResultChild = noItem;
+                    this.searchResultChildFiltered = noItem;
                 }
             }
+            console.log('this.searchResultChildFiltered 118 ',this.searchResultChildFiltered);
         }).catch(error =>{
             console.error('error 27 ',error);
         })
     }
     handleSelectedParent(event){
         // this.selectedParent = event.detail.value;
+        console.log('event.detail.value 122 ',event.detail.value);
+        this.parentId = event.detail.value.value;
         this.defaultVal = event.detail.value.label;
         this.showParentOption = false;
         var childWhere = this.childToParentLookupFieldAPIName +'=\''+event.detail.value.value+'\'';
@@ -132,6 +179,7 @@ export default class DynamicQuickLookupParent extends LightningElement {
     }
     handleSelectedChild(event){
         console.log('value from child 97 ',event.detail.value);
+        this.childId = event.detail.value.value;
         this.defaultChildVal = event.detail.value.label;
         this.showChildOption = false;
     }
@@ -141,55 +189,10 @@ export default class DynamicQuickLookupParent extends LightningElement {
     handleChildShow(event){
         this.showChildOption = event.detail.value;
     }
-    // selectSearchResult(event){
-    //     console.log('event.target.dataset ',event.currentTarget.dataset.id);
-    //     var selectedRecord = this.searchResult.find(element => element.uniqueId == event.currentTarget.dataset.id);
-    //     if(typeof selectedRecord != 'undefined'  && selectedRecord != null && selectedRecord != ''){
-    //         this.searchResult = null;
-    //         this.defaultVal = selectedRecord.label;
-    //     }
-    // }
     showPickListOptions(event){
         //console.log('im here 78');
         if(this.searchResultChild){
             this.showChildOption = true;
         }
-    }
-    handleWrapperBlur(){
-        console.log('im here 140');
-    }
-    handleFocusOut(){
-        console.log('im here 143 ');
-        //this.showParentOption = !this.showParentOption;
-    }
-    handleBlur(){
-        document.addEventListener('click', this.handleClickOutside);
-    }
-    handleClickOutside = (event) => {
-        const path = (event.path || []);
-        const cmpName = this.template.host.tagName;
-        console.log('cmpName ',cmpName);
-        console.log('path ',path);
-        if (!path.includes(this.template.host)) {
-            console.log('im here 155');
-        }
-    }
-    handleMouseLeave(){
-        console.log('im leaving 150');
-    }
-    handleDivClick(event){
-        console.log('📢 Parent Div caught bubbling event:', event.type);
-    }
-    hideDropdown(event){ 
-        // const arr = event.path; 
-        // var classNames = [];
-        // Object.keys(arr).forEach(key => {
-        //     console.log('keys ',key, arr[key].className);
-        //     classNames.push(arr[key].className);
-        // });
-        // console.log('has classname ',classNames.includes('quick-lookup-parent-container'));
-    }
-    handleBlur(event){
-        console.log('name ',event.currentTarget.dataset.name);
     }
 }

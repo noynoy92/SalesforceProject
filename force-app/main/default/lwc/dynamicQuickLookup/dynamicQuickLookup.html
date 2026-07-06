@@ -37,9 +37,10 @@
                 <div class="input-section slds-form-element__control" onblur={handleWrapperBlur} tabindex="0">
                     <lightning-input
                         class="input-parent"
+                        data-id="search-parent-id"
                         name="search-parent-record"
                         label={label}
-                        placeholder={placeHolder}
+                        placeholder={parentPlaceHolder}
                         type="search"
                         onchange={handleChange}
                         value={defaultVal}>
@@ -56,7 +57,7 @@
                     <lightning-input
                         name="search-child-record"
                         label={childlabel}
-                        placeholder={placeHolder}
+                        placeholder={childPlaceHolder}
                         type="search"
                         onchange={handleChange}
                         value={defaultChildVal}

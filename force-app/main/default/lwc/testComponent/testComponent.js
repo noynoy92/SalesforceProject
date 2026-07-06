@@ -20,6 +20,32 @@ const SEARCH_QUERY = gql`
                             AccountNumber{
                               value
                             }
+                            Contacts{
+                              edges{
+                                node{
+                                  Id
+                                  Name{
+                                    value
+                                  }
+                                  Email{
+                                    value
+                                  }
+                                }
+                              }
+                            }
+                            Opportunities{
+                              edges{
+                                node{
+                                  Id
+                                  Name{
+                                    value
+                                  }
+                                  StageName{
+                                    value
+                                  }
+                                }
+                              }
+                            }
                         }
                     }
                 }
@@ -28,7 +54,7 @@ const SEARCH_QUERY = gql`
     }
 `;
 export default class TestComponent extends LightningElement {
-    results;
+    @track results;
     errors;
     @track searchText;
   
@@ -38,8 +64,8 @@ export default class TestComponent extends LightningElement {
     })
   graphqlQueryResult({ data, errors }) {
     if (data) {
-      console.log('data ',data);
-      this.results = data.uiapi.query.Account.edges.map((edge) => edge.node);
+      const accounts = flattenGraphQL(data.uiapi.query.Account);
+      this.results = accounts;
       console.log('this.results ',JSON.stringify(this.results));
     }else{
       console.log('errors ',errors);
@@ -61,4 +87,36 @@ export default class TestComponent extends LightningElement {
       this.searchText = `%${event.target.value}%`;
     }
   }
+  
+  
+}
+function flattenGraphQL(data) {
+    if (Array.isArray(data)) {
+        return data.map(flattenGraphQL);
+    }
+
+    if (data === null || typeof data !== 'object') {
+        return data;
+    }
+
+    // GraphQL collection
+    if ('edges' in data && Array.isArray(data.edges)) {
+        return data.edges.map(edge => flattenGraphQL(edge.node));
+    }
+
+    // UI API scalar field
+    if (
+        Object.keys(data).length === 1 &&
+        Object.prototype.hasOwnProperty.call(data, 'value')
+    ) {
+        return data.value;
+    }
+
+    const result = {};
+
+    for (const [key, value] of Object.entries(data)) {
+        result[key] = flattenGraphQL(value);
+    }
+
+    return result;
 }

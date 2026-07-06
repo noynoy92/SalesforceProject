@@ -1,6 +1,25 @@
 <template>
     <div>
-
         <lightning-input type="search" label="Search" onchange={handleChange}> </lightning-input>
+    </div>
+    <div class="slds-grid slds-grid_vertical">
+        <template for:each={results} for:item="account">
+            <h1 key={account.Id}>Account</h1>
+            <div key={account.Id} class="slds-col">
+                <p>{account.Name}</p>
+            </div>
+            <h1 key={account.Id}>Contacts</h1>
+            <template for:each={account.Contacts} for:item="contact">
+                <div key={contact.Id} class="slds-col">
+                    <p>{contact.Name}</p>
+                </div>
+            </template>
+            <h1 key={account.Id}>Opportunities</h1>
+            <template for:each={account.Opportunities} for:item="opp">
+                <div key={opp.Id} class="slds-col">
+                    <p>{opp.Name}</p>
+                </div>
+            </template>
+        </template>
     </div>
 </template>
