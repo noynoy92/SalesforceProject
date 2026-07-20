@@ -78,6 +78,13 @@ export default class DynamicQuickLookupParent extends LightningElement {
         }).catch(error => {
             console.error('Lodash failed to load', error);
         });
+        const style = document.createElement('style');
+        style.innerText = `
+            .quick-lookup-main-container c-quick-lookup-input-c-m-p .result-section li.slds-listbox__item[data-id=""]{
+                pointer-events: none;
+            }
+        `;
+        this.template.querySelector('.quick-lookup-main-container').appendChild(style);
 
         // const resultDiv = this.template.querySelector('.quick-lookup-parent-container');
         // resultDiv.addEventListener("click", (event) => {
