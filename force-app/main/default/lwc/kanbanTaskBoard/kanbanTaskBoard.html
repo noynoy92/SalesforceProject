@@ -1,0 +1,58 @@
+<template>
+    <div class="slds-grid slds-wrap task-board-wrapper">
+        <div class="slds-col slds-size_4-of-12 slds-p-bottom_large" data-status="Not Started" ondragover={handleDragOver} ondrop={handleDrop}>
+            <p>TODO</p>
+            <div class="slds-grid slds-grid_vertical">
+                <template for:each={taskRecords} for:item="task">
+                    <template if:true={task.todo}>
+                        <div key={task.Id} class="slds-col">
+                            <div
+                                class="task"
+                                draggable="true"
+                                data-id={task.Id}
+                                ondragstart={handleDragStart}>
+                                {task.Subject}
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </div>
+        <div class="slds-col slds-size_4-of-12 slds-p-bottom_large" data-status="In Progress" ondragover={handleDragOver} ondrop={handleDrop}>
+            <p>IN PROGRESS</p>
+            <div class="slds-grid slds-grid_vertical">
+                <template for:each={taskRecords} for:item="task">
+                    <template if:true={task.inProgress}>
+                        <div key={task.Id} class="slds-col">
+                            <div
+                                class="task"
+                                draggable="true"
+                                data-id={task.Id}
+                                ondragstart={handleDragStart}>
+                                {task.Subject}
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </div>
+        <div class="slds-col slds-size_4-of-12 slds-p-bottom_large" data-status="Completed" ondragover={handleDragOver} ondrop={handleDrop}>
+            <p>COMPLETED</p>
+            <div class="slds-grid slds-grid_vertical">
+                <template for:each={taskRecords} for:item="task">
+                    <template if:true={task.completed}>
+                        <div key={task.Id} class="slds-col">
+                            <div
+                                class="task"
+                                draggable="true"
+                                data-id={task.Id}
+                                ondragstart={handleDragStart}>
+                                {task.Subject}
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

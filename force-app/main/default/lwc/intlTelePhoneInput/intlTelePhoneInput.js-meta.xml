@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="defaultValue" label="Default Value" type="String" role="inputOnly"/>
+            <property name="defaultCountry" label="Initial Country" type="String" role="inputOnly"/>
+            <property name="placeHolder" label="Placeholder" type="String" role="inputOnly"/>
+            <property name="outPutNumber" label="Valid Output Number" type="String" role="outputOnly"/>
+            <property name="isValidNumber" label="Is Valid number" type="Boolean" role="outputOnly"/>
+            <property name="selectedCountry" label="Selected Country" type="String" role="outputOnly"/>
+            <property name="isUsedInFlow" label="Is Used in Flow?" type="Boolean" role="inputOnly"/>
+            <property name="useGEOLocation" label="Use Geolocation lookup" description="When enabling this feature, please ensure that both the default value and default country are set to null" type="Boolean" role="inputOnly"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

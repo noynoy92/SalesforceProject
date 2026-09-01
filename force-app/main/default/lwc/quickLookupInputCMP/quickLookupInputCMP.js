@@ -52,7 +52,11 @@ export default class QuickLookupInput extends LightningElement {
     }
 
     selectSearchResult(event){
-        var selectedRecord = this.searchResult.find(element => element.uniqueId == event.currentTarget.dataset.id);
+        const searchResultMap = new Map(
+            this.searchResult.map(result => [result.uniqueId, result])
+        );
+        console.log('searchResultMap ',searchResultMap);
+        var selectedRecord = searchResultMap.get(event.currentTarget.dataset.id);
         if(typeof selectedRecord != 'undefined'  && selectedRecord != null && selectedRecord != ''){
             this.dispatchEvent( new CustomEvent('selected_value', {
                 detail: {

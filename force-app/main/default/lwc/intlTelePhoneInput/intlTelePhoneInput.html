@@ -1,0 +1,13 @@
+<template>
+    <div class="international-phone-wrapper slds-p-around_medium">
+        <input
+            type="tel"
+            class="phone-input"
+            placeholder={placeHolder}
+            lwc:dom="manual"
+        />
+        <template lwc:if={showPhoneError}>
+            <p class="slds-p-top_xx-small slds-text-color_error">{labels.errorMessage}</p>
+        </template>
+    </div>
+</template>
