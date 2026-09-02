@@ -1,0 +1,56 @@
+<template>
+    <div class="multi-select-wrapper">
+        <div class="slds-form-element">
+            <label class="slds-form-element__label" for="msc-label-id" id="combobox-label-id">{label}</label>
+            <div class="slds-form-element__control">
+                <div class="slds-combobox_container slds-has-selection">
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click msc-dropdown">
+                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                            <input data-id="searchInput" onclick={handleOpenDropdown} onblur={handleBlur} value="" oninput={handleSearch} class="slds-input slds-combobox__input" id="msc-label-id" aria-autocomplete="list" aria-controls="msc-input" aria-expanded="false" aria-haspopup="listbox" role="combobox" type="text" placeholder={placeHolder} />
+                            <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                <lightning-icon icon-name="utility:down" alternative-text="" title=""></lightning-icon>
+                            </span>
+                        </div>
+                        <div id="msc-input" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox" aria-label="" aria-busy="false">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <template for:each={itemsInternal} for:item="item">
+                                    <li key={item.uniqueId} role="presentation" class="slds-listbox__item" data-id={item.uniqueId} onmousedown={handleSelect}>
+                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                            <template if:true={item.isCheck}>
+                                                <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <lightning-icon icon-name="utility:check" alternative-text="" title="" ></lightning-icon>
+                                                </span>
+                                            </template>
+                                            <span class="slds-media__body">
+                                                <span class="" title={item.label}>{item.label}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-listbox_selection-group">
+                    <ul class="slds-listbox slds-listbox_horizontal" aria-label="Selected Options:">
+                        <template for:each={itemsInternal} for:item="pill">
+                            <template if:true={pill.isCheck}>
+                                <li key={pill.uniqueId} class="slds-listbox-item">
+                                    <span class="slds-pill slds-p-around_x-small">
+                                        <span class="slds-pill__label" title={pill.label}>{pill.label}</span>
+                                        <span class="slds-icon_container slds-pill__remove" title="Remove">
+                                            <button class="slds-button slds-button_icon slds-button_icon slds-pill__remove" title="Remove" data-id={pill.uniqueId} onclick={handleRemove}>
+                                                <lightning-icon icon-name="utility:close" alternative-text="Remove" title="Remove" ></lightning-icon>
+                                                <!-- <span class="slds-assistive-text">Remove</span> -->
+                                            </button>
+                                        </span>
+                                    </span>
+                                </li>
+                            </template>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

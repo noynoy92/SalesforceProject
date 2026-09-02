@@ -1,0 +1,3 @@
+.multi-select-wrapper li.slds-listbox__item[data-id="No-results-found"] {
+    pointer-events:none;
+}
