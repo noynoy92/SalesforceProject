@@ -3,6 +3,6 @@
         <c-intl-tele-phone-input onphonechange={handlePhoneChange} use-g-e-o-location={useGeolocation} default-value="412345678" default-country="au"></c-intl-tele-phone-input>
     </div>
     <div class="multi-select-cmp">
-        <c-multi-select-combobox items={defItems} default-value={defVal} label="Account"></c-multi-select-combobox>
+        <c-multi-select-combobox items={defItems} default-value={defVal} label="Account" onselectchange={handleSelected}></c-multi-select-combobox>
     </div>
 </template>

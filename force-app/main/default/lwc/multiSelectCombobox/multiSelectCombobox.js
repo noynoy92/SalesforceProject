@@ -22,14 +22,13 @@ export default class MultiSelectCombobox extends LightningElement {
                 this.defaultValue.map(value => [value, value])
             );
         }
-        if(this.items){
-            this.itemsInternal = (this.items || []).map(item => ({
-                ...item,
-                uniqueId: generateUniqueID(17),
-                isCheck: defaultValueMap ? (defaultValueMap.has(item.value) ? true : false) : false
-            }));
-            this.defaultItems = this.itemsInternal;
-        }
+        this.itemsInternal = (this.items || []).map(item => ({
+            ...item,
+            uniqueId: generateUniqueID(17),
+            isCheck: defaultValueMap ? (defaultValueMap.has(item.value) ? true : false) : false
+        }));
+        this.defaultItems = this.itemsInternal;
+        
         console.log('this.itemsInternal ',JSON.stringify(this.itemsInternal));
     }
     renderedCallback(){
@@ -65,7 +64,7 @@ export default class MultiSelectCombobox extends LightningElement {
             if(!this.isEmpty(results)){
                 this.itemsInternal = results;
             }else{
-                this.itemsInternal = [{label:'No results found',value:'No results found',isCheck:false,uniqueId:'No-results-found'}];
+                this.itemsInternal = [{label:`No results found for ${searchValue}`,value:'No results found',isCheck:false,uniqueId:'No-results-found'}];
             }
         }else{
             this.itemsInternal = this.defaultItems;

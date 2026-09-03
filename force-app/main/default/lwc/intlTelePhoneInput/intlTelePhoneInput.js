@@ -46,6 +46,9 @@ export default class IntlTelePhoneInput extends LightningElement {
                 border-radius: 3px;
                 padding:5px;
             }
+            .international-phone-wrapper input.phone-input.iti__tel-input, .international-phone-wrapper .iti.iti--allow-dropdown.iti--show-flags.iti--inline-dropdown {
+                width:100%;
+            }
         `;
         this.template.querySelector('.international-phone-wrapper').appendChild(style);
     }
@@ -157,12 +160,8 @@ export default class IntlTelePhoneInput extends LightningElement {
         return this.phoneInput.getSelectedCountryData();
     }
     checkValidity(){
-        if(!this.phoneInput.isValidNumber()){
-            this.isValidNumber = false;
-        }else{
-            this.isValidNumber = true;
-            this.outPutNumber = this.phoneInput.getNumber();
-            this.selectedCountry = this.getCountryData().iso2;
-        }
+        this.isValidNumber = this.phoneInput.isValidNumber();
+        this.outPutNumber = this.phoneInput.getNumber();
+        this.selectedCountry = this.getCountryData().iso2;
     }
 }

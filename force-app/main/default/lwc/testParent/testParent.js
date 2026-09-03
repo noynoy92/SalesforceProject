@@ -19,4 +19,7 @@ export default class TestParent extends LightningElement {
     handlePhoneChange(event){
         console.log('event from child ', JSON.stringify(event.detail));
     }
+    handleSelected(event){
+        console.log('event from multi-select ',JSON.stringify(event.detail));
+    }
 }
