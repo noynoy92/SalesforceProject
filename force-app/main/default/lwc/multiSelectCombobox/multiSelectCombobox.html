@@ -14,18 +14,20 @@
                         <div id="msc-input" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox" aria-label="" aria-busy="false">
                             <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                                 <template for:each={itemsInternal} for:item="item">
-                                    <li key={item.uniqueId} role="presentation" class="slds-listbox__item" data-id={item.uniqueId} onmousedown={handleSelect}>
-                                        <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
-                                            <template if:true={item.isCheck}>
-                                                <span class="slds-media__figure slds-listbox__option-icon">
-                                                    <lightning-icon icon-name="utility:check" alternative-text="" title="" ></lightning-icon>
+                                    <template if:true={item.isShow}>
+                                        <li key={item.uniqueId} role="presentation" class="slds-listbox__item" data-id={item.uniqueId} onmousedown={handleSelect}>
+                                            <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                                <template if:true={item.isCheck}>
+                                                    <span class="slds-media__figure slds-listbox__option-icon">
+                                                        <lightning-icon icon-name="utility:check" alternative-text="" title="" ></lightning-icon>
+                                                    </span>
+                                                </template>
+                                                <span class="slds-media__body">
+                                                    <span class="" title={item.label}>{item.label}</span>
                                                 </span>
-                                            </template>
-                                            <span class="slds-media__body">
-                                                <span class="" title={item.label}>{item.label}</span>
-                                            </span>
-                                        </div>
-                                    </li>
+                                            </div>
+                                        </li>
+                                    </template>
                                 </template>
                             </ul>
                         </div>

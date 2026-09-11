@@ -3,7 +3,7 @@ import { LightningElement,track,api } from 'lwc';
 export default class MultiSelectCombobox extends LightningElement {
     @api items;
     @api selectedItems;
-    @api defaultValue;
+    @api defaultValue;//['test 1','test 2']
     @api label;
     @track itemsInternal;
     @track placeHolder;
@@ -25,8 +25,10 @@ export default class MultiSelectCombobox extends LightningElement {
         this.itemsInternal = (this.items || []).map(item => ({
             ...item,
             uniqueId: generateUniqueID(17),
+            isShow:true,
             isCheck: defaultValueMap ? (defaultValueMap.has(item.value) ? true : false) : false
         }));
+        this.itemsInternal.push({label:`No results found `,value:'No results found',isCheck:false,uniqueId:'No-results-found',isShow:false});
         this.defaultItems = this.itemsInternal;
         
         console.log('this.itemsInternal ',JSON.stringify(this.itemsInternal));
@@ -58,17 +60,37 @@ export default class MultiSelectCombobox extends LightningElement {
         console.log('value ',event.target.value);
         const searchValue = event.target.value;
         if(searchValue){
-            const results = this.defaultItems.filter(item =>
-                item.value.toLowerCase().includes(searchValue.toLowerCase())
-            );
-            if(!this.isEmpty(results)){
-                this.itemsInternal = results;
+            const itemsMap = this.itemsInternal.map(item =>{
+                if(item.uniqueId != 'No-results-found'){
+                    item.isShow = item.label.toLowerCase().includes(searchValue.toLowerCase());
+                }else{
+                    item.isShow = false;
+                }
+                return item;
+            });
+            console.log('itemsMap 84 ', JSON.stringify(itemsMap));
+            console.log('length ', itemsMap.length);
+            const count = itemsMap.filter(
+                item => item.isShow === true && item.uniqueId !== 'No-results-found'
+            ).length;
+            if(count == 0){
+                this.itemsInternal = this.itemsInternal.map(item => ({
+                    ...item,
+                    isShow: item.uniqueId == 'No-results-found' ? true : false
+                }));
             }else{
-                this.itemsInternal = [{label:`No results found for ${searchValue}`,value:'No results found',isCheck:false,uniqueId:'No-results-found'}];
+                this.itemsInternal = itemsMap;
             }
         }else{
-            this.itemsInternal = this.defaultItems;
+            this.showAllItems();
         }
+        console.log('search ',JSON.stringify(this.itemsInternal));
+    }
+    showAllItems(){
+        this.itemsInternal = this.itemsInternal.map(item => ({
+            ...item,
+            isShow: item.uniqueId == 'No-results-found' ? false : true
+        }));
     }
     isEmpty(value) {
         return (
@@ -87,7 +109,7 @@ export default class MultiSelectCombobox extends LightningElement {
         const element = this.template.querySelector('.msc-dropdown');
         if(element){
             element.classList.remove('slds-is-open');
-            this.itemsInternal = this.defaultItems;
+            this.showAllItems();
         }
         const input = this.template.querySelector('[data-id="searchInput"]');
         if (input) {
@@ -111,7 +133,7 @@ export default class MultiSelectCombobox extends LightningElement {
             }
             return item;
         });
-        this.defaultItems = this.itemsInternal;
+        //this.defaultItems = this.itemsInternal;
         const selectedValues = this.itemsInternal.filter(item => item.isCheck).map(item => item.value);
         this.dispatchEventMethod(selectedValues);
     }

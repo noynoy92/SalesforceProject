@@ -19,6 +19,7 @@
             <property name="isValidNumber" label="Is Valid number" type="Boolean" role="outputOnly"/>
             <property name="selectedCountry" label="Selected Country" type="String" role="outputOnly"/>
             <property name="isUsedInFlow" label="Is Used in Flow?" type="Boolean" role="inputOnly"/>
+            <property name="showErrorMessage" label="Show phone error message?" type="Boolean" role="inputOnly"/>
             <property name="useGEOLocation" label="Use Geolocation lookup" description="When enabling this feature, please ensure that both the default value and default country are set to null" type="Boolean" role="inputOnly"/>
         </targetConfig>
     </targetConfigs>

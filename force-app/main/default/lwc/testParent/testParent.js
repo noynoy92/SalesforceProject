@@ -1,7 +1,7 @@
 import { LightningElement } from 'lwc';
 
 export default class TestParent extends LightningElement {
-    useGeolocation = false;
+    useGeolocation = true;
     get defItems(){
         return [
             {label:'Test one',value:'Test one'},
@@ -16,10 +16,13 @@ export default class TestParent extends LightningElement {
     get defVal(){
         return ['Test one','Test four'];
     }
+    get showErrorMessage(){
+        return true;
+    }
     handlePhoneChange(event){
         console.log('event from child ', JSON.stringify(event.detail));
     }
     handleSelected(event){
-        console.log('event from multi-select ',JSON.stringify(event.detail));
+        console.log('event from multi-select 26 ',JSON.stringify(event.detail));
     }
 }

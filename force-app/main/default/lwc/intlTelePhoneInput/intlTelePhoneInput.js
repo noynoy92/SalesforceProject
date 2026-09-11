@@ -11,6 +11,7 @@ export default class IntlTelePhoneInput extends LightningElement {
     @api selectedCountry;
     @api isUsedInFlow = false;
     @api useGEOLocation =false;
+    @api showErrorMessage = false;
     @track isInitialized = false;
     @track showPhoneError;
     phoneInput;
@@ -97,7 +98,7 @@ export default class IntlTelePhoneInput extends LightningElement {
         if(this.defaultValue){
             // Default value
             this.phoneInput.setNumber(this.defaultValue);
-            this.showPhoneErrorMethod();
+            this.showErrorMessage ? this.showPhoneErrorMethod() : '';
             if(this.isUsedInFlow){
                 this.checkValidity();
             }else{
@@ -130,7 +131,7 @@ export default class IntlTelePhoneInput extends LightningElement {
         console.log('Raw number:', rawValue);
         console.log('Full number:', fullNumber);
         console.log('Valid:', isValid);
-        this.showPhoneErrorMethod();
+        this.showErrorMessage ? this.showPhoneErrorMethod() : '';
         if(this.isUsedInFlow){
             this.checkValidity();
         }else{
@@ -138,7 +139,7 @@ export default class IntlTelePhoneInput extends LightningElement {
         }
     }
     handleCountryChange() {
-        this.showPhoneErrorMethod();
+        this.showErrorMessage ? this.showPhoneErrorMethod() : '';
         if(this.isUsedInFlow){
             this.checkValidity();
         }else{
